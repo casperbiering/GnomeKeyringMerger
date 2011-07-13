@@ -10,19 +10,13 @@ namespace GnomeKeyringMerger
 		{
 			Console.WriteLine ("== GnomeKeyring Merger 0.1\n");
 			
-			String to_keyring = "";
-			while(to_keyring == "") {
-				Console.WriteLine ("\nMERGE TO KEYRING:");
-				to_keyring = SelectKeyring();
-			}
+			Console.WriteLine ("\nMERGE TO KEYRING:");
+			String to_keyring = SelectKeyring();
 			
-			String from_keyring = "";
-			while(from_keyring == "") {
-				Console.WriteLine ("\nMERGE FROM KEYRING:");
-				from_keyring = SelectKeyring();
-			}
+			Console.WriteLine ("\nMERGE FROM KEYRING:");
+			String from_keyring = SelectKeyring();
 			
-			int i = 0;
+			//int i = 0;
 			foreach (int id in Ring.ListItemIDs (from_keyring)) {
 				try {
 					//if(i > 5) {	break; } i++;
@@ -37,22 +31,35 @@ namespace GnomeKeyringMerger
 					ItemData[] matches = Ring.Find(from_info.Type, from_attr);
 					
 					int matches_i = 0;
-					foreach(ItemData match in matches) {
-						if ( match.Keyring != to_keyring ) continue;
+					foreach(ItemData match_info in matches) {
+						if ( match_info.Keyring != to_keyring ) continue;
+						Hashtable match_attr = Ring.GetItemAttributes(to_keyring, match_info.ItemID);
+						if ( match_attr.Count != from_attr.Count ) continue;
+						//Console.WriteLine(match_attr.GetHashCode());
 						matches_i++;
 					}
 					
 					if(matches_i > 1) {
 						Console.WriteLine ("GOT MULTIPLE ITEMS: {0}", from_info.Attributes["name"]);
+						/*foreach(ItemData match_info in matches) {
+							if ( match_info.Keyring != to_keyring ) continue;
+							Hashtable match_attr = Ring.GetItemAttributes(to_keyring, match_info.ItemID);
+							Console.WriteLine(match_attr.ToString());
+						}
+						Console.WriteLine("-");
+						Console.WriteLine(from_attr.);
+						Console.WriteLine("!");*/
 					} else if(matches_i > 0) {
 						//Console.WriteLine (" Found match, is updating needed?");
 						
 						foreach(ItemData to_info in matches) {
 							if ( to_info.Keyring != to_keyring ) continue;
+							Hashtable to_attr = Ring.GetItemAttributes(to_keyring, to_info.ItemID);
+							if ( to_attr.Count != from_attr.Count ) continue;
 							
 							if(to_info.Secret != from_info.Secret) {
 								Console.WriteLine ("Do you want to replace THIS?:");
-								Hashtable to_attr = Ring.GetItemAttributes(to_keyring, to_info.ItemID);
+								
 								DumpItemInfo(to_info, to_attr);
 								
 								Console.WriteLine ("with THIS?:");
@@ -82,8 +89,13 @@ namespace GnomeKeyringMerger
 						}
 					}
 				} catch( System.ArgumentException e ) {
-					Console.WriteLine("\nWorking with {0} ID# {1}\nGot thrown an error: {0}\n", from_keyring, id, e.Message);
-					//throw e;
+					if(e.Message == "Unknown type: 4\nParameter name: type") {
+						Console.WriteLine("\nFaced a SSH passphrases (KeyID #{0} in '{1}' keyring), "+
+						                  "which is not supported by the upstream library. You need to merge it manually.\n",
+						                  id, from_keyring);
+					} else {
+						Console.WriteLine("\nWorking with {0} ID# {1}\nGot thrown an error: {2}\n", from_keyring, id, e.Message);
+					}
 				}
 			}
 			
@@ -92,7 +104,7 @@ namespace GnomeKeyringMerger
 			String delete_keyring = SelectYesNo();
 			if(delete_keyring == "y") {
 				Console.WriteLine ("Removing keyring");
-				//Ring.DeleteKeyring(from_keyring);
+				Ring.DeleteKeyring(from_keyring);
 			} else {
 				Console.WriteLine ("Keeping keyring");
 			}
@@ -117,22 +129,26 @@ namespace GnomeKeyringMerger
 				Console.WriteLine ("["+i+"] "+keyrings[i]);
 			}
 			
-			Console.Write(": ");
-			
-			try {
-				Int16 num = Convert.ToInt16(Console.ReadLine());
+			String answer = "";
+			while(answer == "") {
+				Console.Write(": ");
 				
-				if(num < 0 || num >= keyrings.Length) {
-					Console.WriteLine ("ERROR: Number not available");
-					return "";
+				try {
+					Int16 num = Convert.ToInt16(Console.ReadLine());
+					
+					if(num < 0 || num >= keyrings.Length) {
+						Console.WriteLine ("ERROR: Number not available");
+						continue;
+					}
+					
+					answer = keyrings[num];
+				} catch ( System.FormatException e ) {
+					Console.WriteLine ("ERROR: Input was not a number");
+					continue;
 				}
-				
-				return keyrings[num];
-			} catch ( System.FormatException e ) {
-				Console.WriteLine ("ERROR: Input was not a number");
 			}
 			
-			return "";
+			return answer;
 		}
 		
 		protected static String SelectYesNo () {

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("GnomeKeyringMerger")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Utility for merging two GNOME Keyrings")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
