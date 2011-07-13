@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GnomeKeyringMerger", "GnomeKeyringMerger.csproj", "{8CF751C8-D343-4135-80C3-1B88E12B0107}"
+EndProject
+Project("{9344bdbb-3e7f-41fc-a0dd-8665d75ee146}") = "Packages", "Packages.mdproj", "{4E9D67B8-08D8-4548-9019-7969711CABF1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E9D67B8-08D8-4548-9019-7969711CABF1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4E9D67B8-08D8-4548-9019-7969711CABF1}.Release|x86.ActiveCfg = Release|Any CPU
+		{8CF751C8-D343-4135-80C3-1B88E12B0107}.Debug|x86.ActiveCfg = Debug|x86
+		{8CF751C8-D343-4135-80C3-1B88E12B0107}.Debug|x86.Build.0 = Debug|x86
+		{8CF751C8-D343-4135-80C3-1B88E12B0107}.Release|x86.ActiveCfg = Release|x86
+		{8CF751C8-D343-4135-80C3-1B88E12B0107}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = GnomeKeyringMerger.csproj
+	EndGlobalSection
+EndGlobal
