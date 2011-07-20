@@ -148,6 +148,38 @@ namespace GnomeKeyringMerger
 				}
 			}
 			
+			
+			while(true) {
+				
+				KeyringInfo ki = Ring.GetKeyringInfo(answer);
+				if(!ki.Locked) {
+					break;
+				}
+				
+				Console.WriteLine ("The keyring is locked, please provide the password.");
+				Console.Write("(pwd): ");
+				
+				String pwd = "";
+				ConsoleKeyInfo cki;
+				while(true) {
+					cki = Console.ReadKey(true);
+					
+					if ( cki.Key == ConsoleKey.Enter ) {
+						break;
+					}
+					
+					pwd = pwd + cki.KeyChar;
+				}
+				
+				Console.WriteLine("");
+				
+				try {
+					Ring.Unlock(answer, pwd);
+				} catch (Gnome.Keyring.KeyringException e) {
+					Console.WriteLine("Password incorrect. Try again.");
+				}
+			}
+			
 			return answer;
 		}
 		
